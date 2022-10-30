@@ -22,6 +22,11 @@
 	- [Definir o protótipo da classe filha para que seja uma instancia da classe pai](#definir-o-protótipo-da-classe-filha-para-que-seja-uma-instancia-da-classe-pai)
 	- [Redefinir uma propriedade herdada do construtor](#redefinir-uma-propriedade-herdada-do-construtor)
 	- [Adicionar métodos após a herança](#adicionar-métodos-após-a-herança)
+	- [Sobrescrever métodos herdados](#sobrescrever-métodos-herdados)
+	- [Usar um mixin para adicionar comportamentos comuns entre objetos não relacionados](#usar-um-mixin-para-adicionar-comportamentos-comuns-entre-objetos-não-relacionados)
+	- [Usar closure para evitar que propriedades de um objeto sejam modificados externamente](#usar-closure-para-evitar-que-propriedades-de-um-objeto-sejam-modificados-externamente)
+	- [Entender a expressão de função invocada imediatamente (IIFE)](#entender-a-expressão-de-função-invocada-imediatamente-iife)
+	- [Usar uma IIFE para criar um módulo](#usar-uma-iife-para-criar-um-módulo)
 
 
 ## Definindo um Objeto
@@ -42,7 +47,7 @@ Obs: Os objetos em JavaScript são definidos de maneira parecida com dicionário
 ```JavaScript
 	<tipo>(let, var, const) <name>(nome que representa o objeto) = {
 		<atributos>: <valores> 
-}
+	}
 ```
 
 
@@ -499,4 +504,162 @@ Agora as instâncias de Bird terão ambos os métodos, eat() e fly():
 	duck.fly(); // I'm flying!
 ```
 
+## Sobrescrever métodos herdados
+
+Um objeto pode herdar seus comportamentos (métodos) de outro objeto ao referenciar o prototype do objeto:
+
+```JavaScript
+	ChildObject.prototype = Object.create(ParentObject.prototype);
+```
+
+Em seguida, o ChildObject recebeu seu próprio método ao encadear eles neste prototype:
+
+```JavaScript
+	ChildObject.prototype.methodName = function() {...};
+```
+
+É possível sobrescrever um método herdado. É feito da mesma maneira - ao adicionar o método a ChildObject.prototype utilizando o mesmo nome do método que aquele a ser sobrescrito. Aqui está um exemplo de Bird sobrescrevendo o método eat() herdado de Animal:
+
+```JavaScript
+	function Animal() { }
+	Animal.prototype.eat = function() {
+		return "nom nom nom";
+	};
+	function Bird() { }
+
+	Bird.prototype = Object.create(Animal.prototype);
+
+	Bird.prototype.eat = function() {
+		return "peck peck peck";
+	};
+```
+
+Se você tem uma instância let duck = new Bird(); e você chamar duck.eat(), é assim que o JavaScript procura pelo método na cadeia de prototype de duck:
+
+1. duck => o método eat() está definido aqui? Não.
+2. Bird => o método eat() está definido aqui? => Sim. Execute isso e pare de procurar.
+3. Animal => eat() também é definido, mas o JavaScript parou de procurar antes de chegar a este nív
+4. Objeto => JavaScript parou de procurar antes de chegar a este nível.
+
+
+## Usar um mixin para adicionar comportamentos comuns entre objetos não relacionados
+
+Como você já viu, comportamento é compartilhado através de herança. Porém, existem casos em que a herança não é a melhor solução. Herança não funciona muito bem para objetos não-relacionados como Bird e Airplane. Ambos podem voar, mas um Bird não é um tipo de Airplane e vice-versa.
+
+Para objetos não relacionados, é melhor usar mixins. Um mixin permite que outros objetos utilizem uma coleção de funções.
+
+```JavaScript
+	let flyMixin = function(obj) {
+  	obj.fly = function() {
+    	console.log("Flying, wooosh!");
+  		}
+	};
+```
+
+O flyMixin recebe qualquer objeto e dá a ele o método fly.
+```JavaScript
+	let bird = {
+	name: "Donald",
+	numLegs: 2
+	};
+
+	let plane = {
+	model: "777",
+	numPassengers: 524
+	};
+
+	flyMixin(bird);
+	flyMixin(plane);
+```
+
+Aqui bird e plane são passados para flyMixin, o que em seguida atribui a função fly para cada objeto. Agora bird e plane podem ambos voar:
+
+```JavaScript 
+	bird.fly(); // Flying, wooosh!
+	plane.fly(); // Flying, wooosh!
+```
+
+## Usar closure para evitar que propriedades de um objeto sejam modificados externamente
+
+No desafio anterior, bird possuía uma propriedade pública name. É considerado público porque ele pode ser acessado e modificado fora da definição de bird.
+
+```JavaScript
+	bird.name = "Duffy";
+```
+
+Portanto, qualquer parte do seu código pode facilmente alterar o nome do bird para qualquer valor. Pense sobre coisas como senhas e contas de banco sendo facilmente modificáveis em qualquer parte do seu código. Isso poderia causar inúmeros problemas.
+
+A forma mais simples para tornar essa propriedade pública em privada, seria criando uma variável dentro da função constructor. Isso alteraria o escopo daquela variável para ser apenas o escopo da função construtora ao invés de globalmente disponível. Dessa maneira, a variável pode ser acessada e modificada apenas pelos métodos dentro da função construtora.
+
+```JavaScript
+	function Bird() {
+	let hatchedEgg = 10;
+
+	this.getHatchedEggCount = function() { 
+		return hatchedEgg;
+	};
+	}
+	let ducky = new Bird();
+	ducky.getHatchedEggCount();
+```
+
+Aqui getHatchedEggCount é um método privilegiado, porque ele possui acesso à variável privada hatchedEgg. Isso é possível porque hatchedEgg é declarado no mesmo contexto que getHatchedEggCount. Em JavaScript, a função sempre possui acesso ao contexto na qual foi criada. Isso é chamado de closure.
+
+
+## Entender a expressão de função invocada imediatamente (IIFE)
+
+Um padrão comum em JavaScript é executar a função assim que ela é declarada:
+
+```JavaScript 
+	(function () {
+		console.log("Chirp, chirp!");
+	})();
+```
+
+Essa é uma expressão de função anônima que executa logo após ser declarada, e exibe imediatamente no console Chirp, chirp!
+
+Note que a função não possui nome e não é armazenada em uma variável. Os dois parênteses () ao final da expressão da função faz com que ela seja imediatamente executada ou invocada. Este padrão é conhecido como immediately invoked function expression (expressão de função invocada imediatamente) ou IIFE.
+
+## Usar uma IIFE para criar um módulo
+
+Uma expressão de função imediatamente invocada (IIFE) é frequentemente utilizada para agrupar funcionalidades relacionadas para um único objeto ou módulo. Por exemplo, um desafio anterior definiu dois mixins:
+
+```JavaScript 
+	function glideMixin(obj) {
+		obj.glide = function() {
+			console.log("Gliding on the water");
+		};
+	}
+	function flyMixin(obj) {
+		obj.fly = function() {
+			console.log("Flying, wooosh!");
+		};
+	}
+```
+
+Podemos agrupar esses mixins em um módulo como o seguinte:
+
+```JavaScript
+	let motionModule = (function () {
+		return {
+			glideMixin: function(obj) {
+				obj.glide = function() {
+					console.log("Gliding on the water");
+				};
+			},
+			flyMixin: function(obj) {
+				obj.fly = function() {
+					console.log("Flying, wooosh!");
+				};
+			}
+		}
+		})();
+```
+
+Note que você possui uma expressão de função imediatamente invocada (IIFE) que retorna um objeto motionModule. Esse objeto retornado contém todos os comportamentos de mixin como propriedades do objeto. A vantagem do padrão módulo é que todos os comportamentos de movimento podem ser embalados em um único objeto que pode em seguida ser usado por outras partes do seu código. Aqui está um exemplo utilizando isso:
+
+```JavaScript
+	motionModule.glideMixin(duck);
+	duck.glide();
+```
 
