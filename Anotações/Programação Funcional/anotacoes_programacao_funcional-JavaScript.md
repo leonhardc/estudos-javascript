@@ -10,6 +10,12 @@
   - [Usar o método map para extrair dados de um array](#usar-o-método-map-para-extrair-dados-de-um-array)
   - [Implementar map em um protótipo](#implementar-map-em-um-protótipo)
   - [Usar o método filter para extrair dados de um array](#usar-o-método-filter-para-extrair-dados-de-um-array)
+  - [Implementar o método filter em um protótipo](#implementar-o-método-filter-em-um-protótipo)
+  - [Retornar parte de um array usando o método slice](#retornar-parte-de-um-array-usando-o-método-slice)
+  - [Remover elementos de um array usando slice em vez de splice](#remover-elementos-de-um-array-usando-slice-em-vez-de-splice)
+  - [Combinar dois arrays usando o método concat](#combinar-dois-arrays-usando-o-método-concat)
+  - [Adicionar elementos ao final de um array usando concat em vez de push](#adicionar-elementos-ao-final-de-um-array-usando-concat-em-vez-de-push)
+  - [Usar o método reduce para analisar dados](#usar-o-método-reduce-para-analisar-dados)
 
 ## Aprender sobre programação funcional
 
@@ -335,3 +341,84 @@ Abaixo você vê um exemplo do filter sendo usado do array users para retornar u
     console.log(usersUnder30); // [ { name: 'Amy', age: 20 }, { name: 'camperCat', age: 10 } ]
 ```
 
+## Implementar o método filter em um protótipo
+
+Você pode aprender muito sobre o método filter se você implementá-lo por conta própria. Recomenda-se que você use um loop for ou o método Array.prototype.forEach().
+
+Exemplo: Escreva o seu próprio Array.prototype.myFilter() e faça com que ele se comporte como o Array.prototype.filter(). Você não deve usar o método filter disponibilizado. O objeto Array pode ser acessado dentro de myFilter pelo this.
+
+```JavaScript
+    // A variável global
+    const s = [23, 65, 98, 5];
+
+    Array.prototype.myFilter = function(callback) {
+        // Altere apenas o código abaixo desta linha
+        const newArray = [];
+        for (let i = 0; i < this.length; i++){
+            if (callback(this[i])){
+            newArray.push(this[i]);
+            }
+        }
+        // Altere apenas o código acima desta linha
+        return newArray;
+    };
+
+    const new_s = s.myFilter(function(item) {
+        return item % 2 === 1;
+    });
+```
+
+## Retornar parte de um array usando o método slice
+
+O método slice retorna uma fatia de elementos de um array. Ele pode receber dois argumentos, sendo o primeiro o índice de onde começar a fatiar e o segundo de onde terminar. O índice de fim não é inclusivo. Se os argumentos não forem providenciados, o padrão é começar pelo início e terminar no fim, ou seja, é uma forma simples de criar uma cópia do array inteiro. O método slice retorna um novo array sem modificar o original.
+
+Exemplo:
+
+```JavaScript
+    const arr = ["Cat", "Dog", "Tiger", "Zebra"];
+    const newArray = arr.slice(1, 3); /// ["Dog", "Tiger"]
+```
+
+## Remover elementos de um array usando slice em vez de splice
+
+É comum precisar remover alguns itens de um array e manter o resto. O JavaScript oferece o método splice, que recebe uma posição de onde começar a remover e o número de elementos para remover como argumentos para isso. Se o segundo argumento for omitido, o padrão é remover todos os itens até o final. No entanto, o método splice modifica o array original em que é chamado. Exemplo:
+
+```JavaScript
+    const cities = ["Chicago", "Delhi", "Islamabad", "London", "Berlin"];
+    cities.splice(3, 1);    
+```
+
+Aqui splice retorna a string London e a remove do array cities. cities terá o valor ["Chicago", "Delhi", "Islamabad", "Berlin"].
+
+Como vimos no último desafio, o método slice não altera o array original; ele retorna um novo array que pode ser armazenado em uma variável. Lembre-se de que o método slice toma dois argumentos para os índices de início e fim e retorna um array com os elementos presentes entre esses índices (o índice de fim é não-inclusivo). Usar o método slice em vez do splice ajuda a evitar alterações em arrays e, portanto, efeitos colaterais.
+
+## Combinar dois arrays usando o método concat
+
+Concatenação significa juntar itens de ponta a ponta. Em JavaScript, strings e arrays possuem o método concat e ele funciona igualmente para os dois. Para arrays, o método é chamado em uma instância e um segundo array é passado como argumento. concat então junta os dois arrays em um só. O método retorna um novo array e deixa os dois originais intactos. Exemplo:
+
+```JavaScript
+    [1, 2, 3].concat([4, 5, 6]);
+```
+
+## Adicionar elementos ao final de um array usando concat em vez de push
+
+Programação funcional é basicamente criar e utilizar funções que não modificam os seus argumentos.
+
+O último desafio mostrou como usar o método concat para criar um novo array a partir da mescla de outros sem modificar os originais. Compare os métodos concat e push. O push adiciona itens ao final do mesmo array a partir do qual ele é chamado. Ele modifica o array. Exemplo:
+
+```JavaScript
+    const arr = [1, 2, 3];
+    arr.push(4, 5, 6);
+```
+
+arr teria o valor modificado de: [1, 2, 3, 4, 5, 6], mas não é assim que se faz em programação funcional.
+
+O concat nos oferece uma forma de mesclar novos itens ao final de um array sem alterá-lo.
+
+## Usar o método reduce para analisar dados
+
+Array.prototype.reduce(), ou simplesmente reduce(), realiza as operações mais gerais de todas as operações de array em JavaScript. Você pode resolver quase qualquer problema de processamento de array usando o método reduce.
+
+O método reduce permite formas mais gerais de processamento de array, e é possível mostrar que tanto o filter quanto o map podem ser derivados como aplicações especiais de reduce. O método reduce percorre cada elemento de um array e retorna um valor (uma string, um número, um objeto ou array). Isso pode ser feito através de uma função de callback que é chamada para cada elemento.
+
+A função de callback recebe quatro argumentos. O primeiro argumento é conhecido como o acumulador, ao qual é atribuído o resultado da função de callback na iteração anterior. O segundo é o elemento a ser processado. O terceiro é o índice do elemento e o quarto é o array do qual reduce foi chamado.
