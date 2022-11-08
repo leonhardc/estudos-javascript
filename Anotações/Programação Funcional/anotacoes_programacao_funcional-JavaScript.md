@@ -19,6 +19,12 @@
   - [Usar as funções de ordem superior map, filter ou reduce para solucionar um problema complexo](#usar-as-funções-de-ordem-superior-map-filter-ou-reduce-para-solucionar-um-problema-complexo)
   - [Ordenar um array alfabeticamente usando o método sort](#ordenar-um-array-alfabeticamente-usando-o-método-sort)
   - [Retornar um array ordenado sem modificar o array original](#retornar-um-array-ordenado-sem-modificar-o-array-original)
+  - [Dividir uma string em um array usando o método split](#dividir-uma-string-em-um-array-usando-o-método-split)
+  - [Transformar um array em uma string usando o método join](#transformar-um-array-em-uma-string-usando-o-método-join)
+  - [Usar programação funcional para converter strings em slugs de URL](#usar-programação-funcional-para-converter-strings-em-slugs-de-url)
+  - [Usar o método every para checar se todos os elementos em um array atendem a um critério](#usar-o-método-every-para-checar-se-todos-os-elementos-em-um-array-atendem-a-um-critério)
+  - [Usar o método some para checar se pelo menos um elemento em um array atende a um critério](#usar-o-método-some-para-checar-se-pelo-menos-um-elemento-em-um-array-atende-a-um-critério)
+  - [Iniciar com currying e aplicação parcial](#iniciar-com-currying-e-aplicação-parcial)
 
 ## Aprender sobre programação funcional
 
@@ -660,6 +666,239 @@ Exemplo: Use o método sort na função alphabeticalOrder para ordenar os elemen
 ```
 
 ## Retornar um array ordenado sem modificar o array original
+
+Um efeito colateral do método sort é que ele altera a ordem dos elementos no array original. Em outras palavras, o array sofre uma mutação. Uma forma de evitar isto é primeiro concatenar um array vazio ao array a ordenar (não esqueça que slice e concat retornam um novo array) e, então, executar o método sort no novo array.
+
+Use o método sortna função nonMutatingSort para ordenar os elementos de um array em ordem crescente. A função deve retornar um novo array sem alterar a variável globalArray.
+
+```JavaScript
+    const globalArray = [5, 6, 3, 2, 9];
+
+    function nonMutatingSort(arr) {
+    // Altere apenas o código abaixo desta linha
+    let newArray = arr.slice();
+    newArray.sort(
+        function(a,b) {
+            return a-b;
+        }
+    )
+    // Altere apenas o código acima desta linha
+    }
+
+    nonMutatingSort(globalArray);
+```
+
+## Dividir uma string em um array usando o método split
+
+O método split divide uma string em um array de strings. Ela recebe um delimitador, que pode ser um caractere ou uma expressão regular, como argumento para dividir a string. Por exemplo, se o delimitador for um espaço, você recebe um array de palavras. Se o delimitador for a string vazia, você recebe um array contendo os caracteres da string.
+
+Abaixo há dois exemplos de uso de split, um separando uma string por espaços, e outro por dígitos usando uma expressão regular:
+
+```JavaScript
+    const str = "Hello World";
+    const bySpace = str.split(" ");
+
+    const otherString = "How9are7you2today";
+    const byDigits = otherString.split(/\d/);
+```
+
+bySpace terá o valor ["Hello", "World"] e byDigits terá o valor ["How", "are", "you", "today"].
+
+Como strings são imutáveis, o método split facilita o trabalho com elas.
+
+Exemplo: Use o método split na função splitify para dividir str em um array de palavras. A função deve retornar o array. Note que as palavras nem sempre são separadas por espaços; o array não deve conter nenhuma pontuação.
+
+```JavaScript
+    function splitify(str) {
+    // Altere apenas o código abaixo desta linha
+    let arr = str.split(
+        /[\b\W]/
+    )
+    return arr;
+    // Altere apenas o código acima desta linha
+    }
+
+    splitify("Hello World,I-am code");
+```
+
+## Transformar um array em uma string usando o método join
+
+O método join é usado para juntar os elementos de um array, resultando em uma string. Ele recebe um delimitador como argumento, que é usado para conectar os elementos na string.
+
+Exemplo:
+
+```JavaScript
+    const arr = ["Hello", "World"];
+    const str = arr.join(" ");  
+```
+
+O valor de str é Hello World.
+
+Use o método join (entre outros) dentro da função sentensify para criar uma frase a partir das palavras da string str. A função deve retornar uma string. Por exemplo, I-like-Star-Wars deve ser convertido para I like Star Wars. Não use o método replace neste desafio.
+
+```JavaScript
+    function sentensify(str) {
+    // Altere apenas o código abaixo desta linha
+    // Faz split usando qualquer caractere alphanumerico como delimitador
+    let arr = str.split(/[\W]/);
+    // Junta tudo novamente usando espaço como delimitador
+    let newStr = arr.join(" ");
+    return newStr;
+    // Altere apenas o código acima desta linha
+    }
+
+    sentensify("May-the-force-be-with-you");
+```
+
+## Usar programação funcional para converter strings em slugs de URL
+
+Os últimos desafios cobriram uma série de métodos úteis de strings e arrays que usam princípios de programação funcional. Também aprendemos o poderoso método reduce, que é usado para reduzir arrays a um único valor. Seja para calcular médias ou para ordenação, qualquer operação de array pode ser feita ao usá-lo. Lembre-se de que map e filter são casos especiais de reduce.
+
+Vamos combinar o que aprendemos para resolver um problema prático.
+
+Muitos sites de gerenciamento de conteúdo (content management sites, CMS) usam o título das publicações como parte da URL para maior legibilidade. Por exemplo, se você publicar um artigo no Medium chamado Stop Using Reduce, é provável que o URL use o título em sua composição: .../stop-using-reduce. Talvez você já tenha percebido que acontece o mesmo no freeCodeCamp.
+
+Complete a função urlSlug para que ela converta a string title e a retorne sem maiúsculas e com hifens no lugar dos espaços. Você pode usar qualquer método coberto nesta seção, mas não use replace. Estes são os requisitos:
+
+A entrada é uma string com espaços e letras maiúsculas
+
+A saída é uma string cujos espaços foram substituídos por hifens (-)
+
+A saída não deve conter letras maiúsculas
+
+A saída não deve conter espaços
+
+```JavaScript
+    // SOLUÇÃO
+    // Altere apenas o código abaixo desta linha
+    function urlSlug(title) { 
+    return title
+        .toLowerCase() // para caixa baixa
+        .trim() // remove espaços no começo e no final
+        .split(/\s+/) // separa por um ou mais espaços
+        .join("-"); // junta tudo com - como delimitador
+    }
+    // Altere apenas o código acima desta linha
+    urlSlug("A Mind Needs Books Like A Sword Needs A Whetstone");
+```
+
+## Usar o método every para checar se todos os elementos em um array atendem a um critério
+
+O método every funciona verificando se todos os elementos de um array passam em um teste. Ele retorna um booleano: true se todos os valores atendem ao critério e false caso contrário.
+
+Por exemplo, o código a seguir verifica se todos os elementos no array numbers são menores que 10:
+
+```JavaScript
+    const numbers = [1, 5, 8, 0, 10, 11];
+
+    numbers.every(function(currentValue) {
+        return currentValue < 10;
+    });
+```
+
+O método every retorna false neste exemplo.
+
+Use o método every dentro da função checkPositive para checar se todos os elementos em arr são positivos. A função deve retornar um valor booleano.
+
+```JavaScript
+    function checkPositive(arr) {
+        // Altere apenas o código abaixo desta linha
+
+        return arr.every(function(currentValue) {
+            return currentValue >= 0;
+        });
+        // Altere apenas o código acima desta linha
+    }
+
+    checkPositive([1, 2, 3, -4, 5]);
+```
+
+## Usar o método some para checar se pelo menos um elemento em um array atende a um critério
+
+O método some funciona verificando se pelo menos um dos elementos de um array passam em um teste. Ele retorna um booleano: true se pelo menos um valor atende ao critério e false caso contrário.
+
+Por exemplo, o código a seguir verifica se qualquer elemento no array numbers é menor que 10:
+
+```JavaScript
+    const numbers = [10, 50, 8, 220, 110, 11];
+
+    numbers.some(function(currentValue) {
+    return currentValue < 10;
+    });
+```
+
+O método some retorna true.
+
+Use o método some na função checkPositive para verificar se algum elemento em arr é positivo. A função deve retornar um valor booleano.
+
+```JavaScript
+    function checkPositive(arr) {
+    // Altere apenas o código abaixo desta linha
+    return arr.some(
+        function(currentValue) {
+        return currentValue > 0;
+        }
+    );
+    // Altere apenas o código acima desta linha
+    }
+
+    checkPositive([1, 2, 3, -4, 5]);
+```
+
+## Iniciar com currying e aplicação parcial
+
+A aridade de uma função é o número de argumentos que ela toma. Realizar currying em uma função significa transformar uma função de aridade N em N funções de aridade 1.
+
+Em outras palavras, a função é reestruturada para que ela receba apenas um argumento e retorne outra função que recebe o próximo argumento e assim por diante.
+
+```JavaScript
+    function unCurried(x, y) {
+        return x + y;
+    }
+
+    function curried(x) {
+        return function(y) {
+            return x + y;
+        }
+    }
+
+    const curried = x => y => x + y
+
+    curried(1)(2)
+```
+
+Isso é útil em seu programa quando você não pode fornecer todos os argumentos para uma função de uma só vez. Você pode salvar cada chamada de função em uma variável, que será uma referência à função retornada que recebe o próximo argumento quando ele estiver disponível. Um exemplo usando a função do exemplo acima:
+
+```JavaScript
+    const funcForY = curried(1);
+    console.log(funcForY(2)); // 3
+```
+
+Da mesma forma, aplicação parcial pode ser descrita como a aplicação de alguns argumentos a uma função e o retorno de outra função à qual é aplicada a mais argumentos. Exemplo:
+
+```JavaScript
+    function impartial(x, y, z) {
+        return x + y + z;
+    }
+
+    const partialFn = impartial.bind(this, 1, 2);
+    partialFn(10); // 13
+```
+
+Complete a função add de forma que ela use currying para adicionar os parâmetros x, y e z.
+
+```JavaScript
+    function add(x) {
+    // Add your code below this line
+    return function(y) {
+        return function(z) {
+        return x + y + z;
+        };
+    };
+    // Add your code above this line
+    }
+    add(10)(20)(30);
+```
 
 
 
