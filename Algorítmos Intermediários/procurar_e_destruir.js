@@ -19,7 +19,7 @@ function destroyer(arr) {
     }
     return newArr;
     // O objeto 'arguments' é comum a todas as funções em javascript, nele
-    // contem todos os elementos passados como argumento da função.
+    // estão contidos todos os elementos passados como argumento da função.
   }
   
   destroyer([1, 2, 3, 1, 2, 3], 2, 3);
