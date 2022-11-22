@@ -23,13 +23,14 @@ function sumFibs(num) {
     }
     // Gerando os 'num' primeiros numeros da série de fibonnaci
     
-    while(ultimo < num){
+    while(ultimo <= num){
         fib.push(penultimo + ultimo);
         penultimo = fib[fib.length-2];
         ultimo = fib[fib.length-1];
     }
-    fib.pop(); // retira ultimo elemento para que todos os elementos do array
+    //fib.pop(); // retira ultimo elemento para que todos os elementos do array
                // sejam menores que num
+    console.log(fib);
     console.log(sum(fib.filter(item => (item % 2) === 1)));
     
   }
