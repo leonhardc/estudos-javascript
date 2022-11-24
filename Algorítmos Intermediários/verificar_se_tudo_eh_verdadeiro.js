@@ -8,9 +8,6 @@
 
     Em JavaScript, valores truthy são valores que traduzem para true quando 
     avaliados em um contexto booleano.
-
-    Lembre-se, você pode acessar propriedades de objeto através de notação de
-    ponto ou notação [].
 */
 
 function truthCheck(collection, pre) {
