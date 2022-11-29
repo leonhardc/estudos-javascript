@@ -40,6 +40,14 @@ function checkCashRegister(price, cash, cid) {
             console.log({status: "CLOSED", change:[aux]})
             // return {status: "CLOSED", change:[aux]};
         }
+        else{ // se o resto nao for igual a zero
+
+            let obj = [];
+            let resto = troco*100;
+            for(let item of caixa_troco){
+                
+            }
+        }
     }
 
 
