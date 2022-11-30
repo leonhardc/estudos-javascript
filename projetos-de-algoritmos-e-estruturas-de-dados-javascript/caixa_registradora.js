@@ -67,19 +67,26 @@ function checkCashRegister(price, cash, cid) {
                 valorCaixa *= escala;
                 
                 if(resto%unitario === 0){
-                    console.log("Entrou");
                     objReturn.change.push([moeda, (resto/escala)]);
                     return objReturn;
                 }
 
                 // Segunda parte
-                divisor = parseInt(resto/unitario);
-                add = (unitario*divisor); // item que eu vou adicionar em change nessa iteração
-                
-                objReturn.change.push([moeda, (add/escala)])
-
-                resto = resto - add;
-                
+                if(resto >= valorCaixa){
+                    add = valorCaixa; // adiciona o valor em caixa em changed
+                    if(add !== 0){
+                        objReturn.change.push([moeda, (add/escala)]);
+                    }
+                    resto -= valorCaixa;
+                }
+                else { // se o resto for menor do que o valor em caixa
+                    divisor = parseInt(resto/unitario);
+                    add = (unitario*divisor);
+                    if(add !== 0){
+                        objReturn.change.push([moeda, (add/escala)]);
+                    }
+                    resto -= add;
+                }
             }
         }        
     }
