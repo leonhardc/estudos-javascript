@@ -17,7 +17,18 @@ function checkCashRegister(price, cash, cid) {
     total_caixa = total_caixa.toFixed(2); // Fixar duas casas decimais para o resultado
 
     /* Checagens */
-    if(troco > total_caixa){ // Checa se há troco suficiente na caixa registradora
+    if(troco >= total_caixa){ // Checa se há troco suficiente na caixa registradora
+        if(troco == total_caixa){
+            // Se o dinheiro em caixa for exatamente igual ao dinheiro do
+            // troco
+            let objReturn = {
+                status: "CLOSED", 
+                change: []
+            };
+            objReturn.change = cid.slice();
+            return objReturn
+        } 
+        // No caso do total do caixa ser menor do que o troco devido       
         return {status: "INSUFFICIENT_FUNDS", change: []};
     }
     else {
@@ -29,47 +40,71 @@ function checkCashRegister(price, cash, cid) {
             }
         for(let moeda of troco_caixa){ total_caixa += moeda[1] }
 
-        if(total_caixa < troco){ // verificar se o troco pode ser dado nas moedas que tem em caixa
+        if(troco > total_caixa){ // verificar se o troco pode ser dado nas moedas que tem em caixa
             return {status: "INSUFFICIENT_FUNDS", change: []};
         }
+        else{
+            
+            let caixa = moedas.filter(item => item[1] <= troco);
+            let aux = caixa.slice();
+            let troco_caixa = [];
+            for(let moeda of caixa){
+                troco_caixa.push(cid.filter(item => item[0] == moeda[0])[0]);
+                aux.filter(item => item[0] === moeda[0])[0]
+                .push(cid.filter(item => item[0] == moeda[0])[0][1]);
+                
+            }
+            caixa = aux.reverse(); // caixa atualizado
+            
+            // iterar sobre o array e buscar todos as moedas que podem ser usadas como troco
+            let objReturn = {status: "OPEN", change: []}
+            let  add, divisor;
+            let resto = troco*escala;
+            for(let item of caixa){
+                // Primeira parte
+                let [moeda, unitario, valorCaixa] = item;
+                unitario *=  escala;
+                valorCaixa *= escala;
+                
+                if(resto%unitario === 0){
+                    console.log("Entrou");
+                    objReturn.change.push([moeda, (resto/escala)]);
+                    return objReturn;
+                }
+
+                // Segunda parte
+                divisor = parseInt(resto/unitario);
+                add = (unitario*divisor); // item que eu vou adicionar em change nessa iteração
+                
+                objReturn.change.push([moeda, (add/escala)])
+
+                resto = resto - add;
+                
+            }
+        }        
     }
     
-    
-    /* 
-        Utilizando filtro para fazer array para melhorar os calculos
-    */
-    // let caixa_registradora = moedas.filter(item => item[1] <= troco);
-    // for(let i = 0; i < caixa_registradora.length; i++){
-    //     let total_moeda_caixa = cid.filter(
-    //         item => item[0] === caixa_registradora[i][0]
-    //         )[0][1];
-    //         caixa_registradora[i].push(total_moeda_caixa)
-    // }
 
-    /*
-        O objeto caixa registradora deve estar no formato abaixo
-        [
-            ['nome da moeda', valor_unitario, valor_em_caixa]
-        ]
-
-    */
 }
 
-  checkCashRegister(
-    19.5, 20, 
-    [
-        ["PENNY", 1.01], 
-        ["NICKEL", 2.05], 
-        ["DIME", 3.1], 
-        ["QUARTER", 4.25], 
-        ["ONE", 90], 
-        ["FIVE", 55], 
-        ["TEN", 20], 
-        ["TWENTY", 60], 
-        ["ONE HUNDRED", 100]
-    ]
-    );
+console.log(
 
+    checkCashRegister(3.26, 100, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]])
+//   checkCashRegister(
+//     19.5, 20, 
+//     [
+//         ["PENNY", 1.01], 
+//         ["NICKEL", 2.05], 
+//         ["DIME", 3.1], 
+//         ["QUARTER", 4.25], 
+//         ["ONE", 90], 
+//         ["FIVE", 55], 
+//         ["TEN", 20], 
+//         ["TWENTY", 60], 
+//         ["ONE HUNDRED", 100]
+//     ]
+//     )
+)
     /*
         checkCashRegister(
                 19.5, 20, 
